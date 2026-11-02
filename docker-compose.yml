@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    container_name: letter_credit_db
+
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+
+    volumes:
+      - letter_credit_postgres:/var/lib/postgresql/data
+
+  odoo:
+    image: odoo:18.0
+    container_name: letter_credit_odoo
+
+    depends_on:
+      - db
+
+    ports:
+      - "1325:8069"
+
+    volumes:
+      - letter_credit_odoo_data:/var/lib/odoo
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - ./letter_of_credit:/mnt/extra-addons/letter_of_credit
+
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: odoo
+
+volumes:
+  letter_credit_postgres:
+  letter_credit_odoo_data:
